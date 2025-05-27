@@ -322,87 +322,8 @@ def get_data(catalog, id):
     return None
 
 def req_1(catalog, origin_id, dest_id):
-    """
-    Requerimiento 1 (simplificado): Determinar si existe un camino simple entre dos ubicaciones.
-    Devuelve: tiempo de ejecución, número de nodos en el camino, secuencia de ubicaciones,
-              domiciliarios únicos y restaurantes encontrados.
-    """
-    start_time = time.perf_counter()
-    result = mp.new_map(10, 0.7)
-    graph = mp.get(catalog, 'graph')
-
-    # Validaciones básicas
-    if not dg.contains_vertex(graph, origin_id) or not dg.contains_vertex(graph, dest_id):
-        mp.put(result, 'path_exists', False)
-        mp.put(result, 'message', 'Origen o destino no existen en el grafo.')
-        mp.put(result, 'execution_time', (time.perf_counter() - start_time) * 1000)
-        return result
-
-    if origin_id == dest_id:
-        mp.put(result, 'path_exists', False)
-        mp.put(result, 'message', 'El origen y destino no pueden ser iguales.')
-        mp.put(result, 'execution_time', (time.perf_counter() - start_time) * 1000)
-        return result
-
-    try:
-        bfs_result = bfs_alg.bfs(graph, origin_id)
-
-        if not bfs_alg.has_path_to_bfs(bfs_result, dest_id):
-            mp.put(result, 'path_exists', False)
-            mp.put(result, 'message', 'No existe un camino entre los puntos dados.')
-            mp.put(result, 'execution_time', (time.perf_counter() - start_time) * 1000)
-            return result
-
-        # Reconstrucción del camino
-        path_stack = bfs_alg.path_to_bfs(bfs_result, dest_id)
-        path_list = lt.new_list()
-        while not st.is_empty(path_stack):
-            node = st.pop(path_stack)
-            lt.add_first(path_list, node)
-
-        # Análisis simple de domiciliarios y restaurantes
-        deliverers_set = mp.new_map(100, 0.7)
-        restaurants_list = lt.new_list()
-
-        for i in range(lt.size(path_list)):
-            node_id = lt.get_element(path_list, i)
-            node_info = dg.get_vertex_information(graph, node_id)
-            if node_info is None:
-                continue
-
-            if mp.get(node_info, 'type') == 'restaurant':
-                lt.add_last(restaurants_list, node_id)
-
-            if mp.contains(node_info, 'deliverers'):
-                deliverers = mp.get(node_info, 'deliverers')
-                for j in range(lt.size(deliverers)):
-                    d_id = lt.get_element(deliverers, j)
-                    if not mp.contains(deliverers_set, d_id):
-                        mp.put(deliverers_set, d_id, True)
-
-        # Crear lista de domiciliarios únicos
-        unique_deliverers = lt.new_list()
-        deliverer_keys = mp.key_set(deliverers_set)
-        for i in range(lt.size(deliverer_keys)):
-            lt.add_last(unique_deliverers, lt.get_element(deliverer_keys, i))
-
-        # Resultados
-        mp.put(result, 'path_exists', True)
-        mp.put(result, 'execution_time', (time.perf_counter() - start_time) * 1000)
-        mp.put(result, 'path_length', lt.size(path_list))
-        mp.put(result, 'path_sequence', path_list)
-        mp.put(result, 'unique_deliverers', unique_deliverers)
-        mp.put(result, 'restaurants', restaurants_list)
-
-        return result
-
-    except Exception as e:
-        mp.put(result, 'path_exists', False)
-        mp.put(result, 'error', f"Error al ejecutar BFS: {str(e)}")
-        mp.put(result, 'execution_time', (time.perf_counter() - start_time) * 1000)
-        return result
     
-
+        return 
 
 # Funciones de requerimientos restantes (placeholder)
 def req_2(catalog):
